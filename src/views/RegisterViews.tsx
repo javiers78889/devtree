@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import { useForm } from 'react-hook-form'
 import ErrorMessage from "../components/ErrorMessage";
+import { RegisterForm } from "../types";
 
 export default function RegisterViews() {
-    const initialValues = {
+    const initialValues: RegisterForm = {
         name: '',
         email: '',
         handle: '',
@@ -11,9 +12,10 @@ export default function RegisterViews() {
         password_confirmation: ''
     }
     const { register, watch, handleSubmit, formState: { errors } } = useForm({ defaultValues: initialValues })
+    const password = watch('password')
 
-    const handleRegister = () => {
-        console.log(errors)
+    const handleRegister = (datos: RegisterForm) => {
+        console.log(datos)
     }
     return (
         <>
@@ -41,7 +43,13 @@ export default function RegisterViews() {
                         type="email"
                         placeholder="Email de Registro"
                         className="bg-slate-100 border-none p-3 rounded-lg placeholder-slate-400"
-                        {...register('email', { required: "El email es obligatorio" })}
+                        {...register('email', {
+                            required: "El email es obligatorio",
+                            pattern: {
+                                value: /\S+@\S+\.\S+/,
+                                message: "E-mail no válido",
+                            },
+                        })}
                     />
                     {errors.email && <ErrorMessage>{errors.email?.message}</ErrorMessage>}
                 </div>
@@ -63,7 +71,10 @@ export default function RegisterViews() {
                         type="password"
                         placeholder="Password de Registro"
                         className="bg-slate-100 border-none p-3 rounded-lg placeholder-slate-400"
-                        {...register('password', { required: "El password es obligatorio" })}
+                        {...register('password', {
+                            required: "El password es obligatorio",
+                            minLength: { value: 8, message: "El password debe tener minimo 8 caracteres" }
+                        })}
                     />
                     {errors.password && <ErrorMessage>{errors.password?.message}</ErrorMessage>}
                 </div>
@@ -75,7 +86,7 @@ export default function RegisterViews() {
                         type="password"
                         placeholder="Repetir Password"
                         className="bg-slate-100 border-none p-3 rounded-lg placeholder-slate-400"
-                        {...register('password_confirmation', { required: "Es obligatorio Confirmar el Password" })}
+                        {...register('password_confirmation', { required: "Es obligatorio Confirmar el Password", validate: (value) => value === password || 'Los password no son iguales' })}
                     />
                     {errors.password_confirmation && <ErrorMessage>{errors.password_confirmation?.message}</ErrorMessage>}
                 </div>
