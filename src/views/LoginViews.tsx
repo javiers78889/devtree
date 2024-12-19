@@ -2,6 +2,10 @@ import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { LoginForm } from "../types";
 import ErrorMessage from "../components/ErrorMessage";
+import axios, { AxiosError, isAxiosError } from "axios";
+import { toast } from "sonner";
+
+const API = `${import.meta.env.VITE_API}auth/login`;
 
 export default function LoginViews() {
     const initialValues: LoginForm = {
@@ -10,9 +14,19 @@ export default function LoginViews() {
 
     }
     const { register, reset, handleSubmit, formState: { errors } } = useForm({ defaultValues: initialValues })
-    const handlerLogin = (datos: LoginForm) => {
-        console.log(datos)
-        reset()
+    const handlerLogin = async (datos: LoginForm) => {
+        try {
+            const response = await axios.post(API, datos)
+            toast.success(response.data)
+            reset()
+        } catch (error) {
+            if(isAxiosError(error)){
+
+                toast.error(error.response?.data.error)
+            }
+        }
+       
+
     }
     return (
         <>
@@ -29,10 +43,12 @@ export default function LoginViews() {
                         type="email"
                         placeholder="Email de Registro"
                         className="bg-slate-100 border-none p-3 rounded-lg placeholder-slate-400"
-                        {...register('email', { required: "El email es obligatorio" , pattern: {
-                            value: /\S+@\S+\.\S+/,
-                            message: "E-mail no válido",
-                        },})}
+                        {...register('email', {
+                            required: "El email es obligatorio", pattern: {
+                                value: /\S+@\S+\.\S+/,
+                                message: "E-mail no válido",
+                            },
+                        })}
                     />
                     {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
                 </div>
