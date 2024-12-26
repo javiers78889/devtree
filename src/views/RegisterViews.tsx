@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from 'react-hook-form'
 import ErrorMessage from "../components/ErrorMessage";
 import { RegisterForm } from "../types";
@@ -8,6 +8,7 @@ import api from "../config/axios";
 
 
 export default function RegisterViews() {
+    const navigate = useNavigate()
     const initialValues: RegisterForm = {
         name: '',
         email: '',
@@ -24,6 +25,7 @@ export default function RegisterViews() {
             const { data } = await api.post('/', datos)
             toast.success(data.mensaje)
             reset()
+            navigate('/auth/login')
         } catch (error) {
             if (isAxiosError(error)) {
                 toast.error(error.response?.data.error)
