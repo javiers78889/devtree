@@ -2,10 +2,11 @@ import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { LoginForm } from "../types";
 import ErrorMessage from "../components/ErrorMessage";
-import axios, { AxiosError, isAxiosError } from "axios";
+import  { isAxiosError } from "axios";
 import { toast } from "sonner";
+import api from "../config/axios";
 
-const API = `${import.meta.env.VITE_API}auth/login`;
+
 
 export default function LoginViews() {
     const initialValues: LoginForm = {
@@ -13,10 +14,11 @@ export default function LoginViews() {
         password: '',
 
     }
-    const { register, reset, handleSubmit, formState: { errors } } = useForm({ defaultValues: initialValues })
+    const { register, handleSubmit, formState: { errors } } = useForm({ defaultValues: initialValues })
     const handlerLogin = async (datos: LoginForm) => {
         try {
-            const response = await axios.post(API, datos)
+            console.log('pla')
+            const response = await api.post('auth/login', datos)
             toast.success(response.data[1])
             localStorage.setItem('AUTH_TOKEN', response.data[0])
            
