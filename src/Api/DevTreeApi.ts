@@ -1,7 +1,7 @@
 import { toast } from "sonner";
 import api from "../config/axios";
 import { isAxiosError } from "axios";
-import { User } from "../types";
+import { UpdateForm, User } from "../types";
 
 export async function getUser() {
 
@@ -12,6 +12,19 @@ export async function getUser() {
     } catch (error) {
         if (isAxiosError(error))
             toast.error(error.response?.data.error)
+
+    }
+
+}
+export async function updateUser(datos: UpdateForm) {
+
+    try {
+        const { data } = await api.patch<string>('/users', datos)
+        return data
+
+    } catch (error) {
+        if (isAxiosError(error))
+          throw new Error(error.response?.data.error)
 
     }
 

@@ -1,7 +1,10 @@
 import { useForm } from 'react-hook-form'
 import ErrorMessage from '../components/ErrorMessage'
 import { UpdateForm, User } from '../types'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQueryClient, useMutation } from '@tanstack/react-query'
+import { updateUser } from '../Api/DevTreeApi'
+import { toast } from 'sonner'
+
 
 
 export default function ProfileView() {
@@ -9,20 +12,31 @@ export default function ProfileView() {
 
     const data: User = queryClient.getQueryData(['user'])!
 
-    const { register, watch, reset, handleSubmit, formState: { errors } } = useForm({
+    const { register, handleSubmit, formState: { errors } } = useForm({
         defaultValues: {
             handle: data.handle,
             description: data.description
         }
     })
+    const updateProfile = useMutation({
+        mutationFn: updateUser,
+        onError: (error) => {
 
-    const update = (datos: UpdateForm) => {
-        console.log(datos)
+            toast.error(error.message)
+
+        },
+        onSuccess: (data) => {
+            toast.success(data)
+            queryClient.invalidateQueries({queryKey:['user']})
+        }
+    })
+    const handleSubmitupdate = (datos: UpdateForm) => {
+        updateProfile.mutate(datos)
     }
     return (
         <form
             className="bg-white p-10 rounded-lg space-y-5"
-            onSubmit={handleSubmit(update)}
+            onSubmit={handleSubmit(handleSubmitupdate)}
         >
             <legend className="text-2xl text-slate-800 text-center">Editar Información</legend>
             <div className="grid grid-cols-1 gap-2">
