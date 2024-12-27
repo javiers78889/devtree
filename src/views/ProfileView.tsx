@@ -41,13 +41,21 @@ export default function ProfileView() {
 
         },
         onSuccess: (data) => {
-            console.log(data.image)
+            toast.success('Imagen Actualizada. cargando...')
+            queryClient.setQueryData(['user'], (prevData: User) => {
+                return {
+                    ...prevData,
+                    image: data.image
+                }
+
+            })
         }
     })
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
 
             imageMutation.mutate(e.target.files[0])
+
         }
     }
     return (

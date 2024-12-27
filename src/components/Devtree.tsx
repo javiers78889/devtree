@@ -2,11 +2,15 @@ import { Link, Outlet } from "react-router-dom";
 import { Toaster } from "sonner";
 import NavigationTabs from "./NavigationTabs";
 import { User } from "../types";
+import { useQueryClient } from "@tanstack/react-query";
 type devtree = {
     data: User
 }
 
 export default function Devtree({ data }: devtree) {
+    const queryClient = useQueryClient()
+
+    const datos: User = queryClient.getQueryData(['user'])!
     return (
         <>
             <header className="bg-slate-800 py-5">
@@ -42,7 +46,9 @@ export default function Devtree({ data }: devtree) {
                             <Outlet />
                         </div>
                         <div className="w-full md:w-96 bg-slate-800 px-5 py-10 space-y-6">
-
+                            <p className="text-4xl text-center text-white">{data.handle}</p>
+                            <img src={datos.image} alt="imagen de perfil" className="mx-auto max-w[250px]" />
+                            <p className="text-center text-lg font-black text-white">{datos.description}</p>
                         </div>
                     </div>
                 </main>
