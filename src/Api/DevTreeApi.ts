@@ -24,7 +24,22 @@ export async function updateUser(datos: UpdateForm) {
 
     } catch (error) {
         if (isAxiosError(error))
-          throw new Error(error.response?.data.error)
+            throw new Error(error.response?.data.error)
+
+    }
+
+}
+export async function uploadImage(file: File) {
+    let formData = new FormData()
+
+    formData.append('file', file)
+    try {
+        const { data } = await api.post('/users/image', formData)
+
+        return data
+    } catch (error) {
+        if (isAxiosError(error))
+            throw new Error(error.response?.data.error)
 
     }
 
