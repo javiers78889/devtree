@@ -16,7 +16,7 @@ export async function getUser() {
     }
 
 }
-export async function updateUser(datos: UpdateForm) {
+export async function updateUser(datos: User) {
 
     try {
         const { data } = await api.patch<string>('/users', datos)

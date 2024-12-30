@@ -1,4 +1,4 @@
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { Toaster } from "sonner";
 import NavigationTabs from "./NavigationTabs";
 import { User } from "../types";
@@ -11,6 +11,11 @@ export default function Devtree({ data }: devtree) {
     const queryClient = useQueryClient()
 
     const datos: User = queryClient.getQueryData(['user'])!
+    const navigate= useNavigate()
+    const Logout = () => {
+        localStorage.removeItem('AUTH_TOKEN')
+        navigate('/')
+    }
     return (
         <>
             <header className="bg-slate-800 py-5">
@@ -21,7 +26,7 @@ export default function Devtree({ data }: devtree) {
                     <div className="md:w-1/3 md:flex md:justify-end">
                         <button
                             className=" bg-lime-500 p-2 text-slate-800 uppercase font-black text-xs rounded-lg cursor-pointer"
-                            onClick={() => { }}
+                            onClick={Logout}
                         >
                             Cerrar Sesión
                         </button>
