@@ -20,6 +20,7 @@ export async function updateUser(datos: User) {
 
     try {
         const { data } = await api.patch<string>('/users', datos)
+        //console.log(datos)
         return data
 
     } catch (error) {

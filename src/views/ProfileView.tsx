@@ -31,7 +31,10 @@ export default function ProfileView() {
         }
     })
     const handleSubmitupdate = (datos: UpdateForm) => {
-        updateProfile.mutate(datos)
+        const user: User = queryClient.getQueryData(['user'])!
+        user.handle= datos.handle
+        user.description= datos.description
+        updateProfile.mutate(user)
     }
 
     const imageMutation = useMutation({
