@@ -5,7 +5,8 @@ import { isValidUrl } from "../utils/utils"
 import { toast } from "sonner"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { updateUser } from "../Api/DevTreeApi"
-import { User } from "../types"
+import { SocialNetwork, User } from "../types"
+
 
 
 
@@ -18,7 +19,7 @@ export default function LinkTreeViews() {
 
   useEffect(()=>{
     const datos = devTreeLinks.map( item => {
-      const baseDatos = JSON.parse(usuario.links).find(link => link.name === item.name)
+      const baseDatos = JSON.parse(usuario.links).find((link:SocialNetwork) => link.name === item.name)
       if(baseDatos){
         return {...item, url: baseDatos.url, enabled: baseDatos.enabled}
       }
@@ -48,9 +49,9 @@ export default function LinkTreeViews() {
       toast.error(error.message)
     }
   })
-
+  const enlaces:SocialNetwork[] = JSON.parse(usuario.links)
+  
   const handleEnableLink = (props: string) => {
-
     const filtro = devTreeLinks.map(items => {
       if (items.name === props) {
         if (isValidUrl(items.url)) {
@@ -70,16 +71,52 @@ export default function LinkTreeViews() {
     }
     )
     setDevTreeLinks(filtro)
-    
+    const selected = filtro.find(item => item.name === props)
+    let updatedItems : SocialNetwork[]=[]
+    if(selected?.enabled){
+      const id = enlaces.filter(li => li.id).length+1
+      if(enlaces.some(link => link.name === props)){
+        updatedItems= enlaces.map(item =>{
 
+          if(item.name === props){
+            return {...item,enabled: true, id}
+          }else{
+            return item
+          }
+
+        })
+      }else{
+        const newItem = {...selected, id}
+        updatedItems=[...enlaces, newItem]
+      }
+
+    }else{
+     const indexToUpdate= enlaces.findIndex((n)=> n.name === props)
+     updatedItems = enlaces.map(item =>{
+      if(item.name === props){
+        return {...item, enabled: false, id:0}
+      }else if(item.id > indexToUpdate && (indexToUpdate !== 0 && item.id === 1)){  
+        return {
+          ...item, id: item.id-1
+        }
+
+      }else{
+
+        return item
+
+      }
+     })
+    }
+    
+    
       querclient.setQueryData(['user'], (prevData: User) => {
 
         return {
           ...prevData,
-          links: JSON.stringify(filtro)
+          links: JSON.stringify(updatedItems)
         }
       })
-  
+      
 
 
   }
@@ -89,7 +126,7 @@ export default function LinkTreeViews() {
       {devTreeLinks.map(item => (
         <DevTreeInput key={item.name} item={item} cambio={cambio} handleEnableLink={handleEnableLink} />
       ))}
-      <button className="bg-cyan-400 p-2 text-lg w-full uppercase text-slate-600 rounded font-bold" onClick={() => mutate(usuario)}>Guardar Cambios</button>
+      <button className="bg-cyan-400 p-2 text-lg w-full uppercase text-slate-600 rounded font-bold" onClick={() => mutate(querclient.getQueryData(['user'])! )}>Guardar Cambios</button>
     </div>
   )
 }

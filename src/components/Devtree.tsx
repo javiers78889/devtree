@@ -1,9 +1,12 @@
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { Toaster } from "sonner";
+import {DndContext, DragEndEvent, closestCenter} from '@dnd-kit/core'
+import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable'
 import NavigationTabs from "./NavigationTabs";
 import { SocialNetwork, User } from "../types";
 import { useEffect, useState } from "react";
 import DevTreeLinks from "./DevTreeLinks";
+import { useQueryClient } from "@tanstack/react-query";
 
 type devtree = {
     data: User
@@ -19,6 +22,26 @@ export default function Devtree({ data }: devtree) {
     useEffect(()=>{
         setEnabledLink(JSON.parse(data.links).filter((item: SocialNetwork) => item.enabled))
     },[data])
+
+    const queryclient= useQueryClient()
+    const handleDragEnd = (e:DragEndEvent)=>{
+        const{active , over} = e
+        if(over && over.id){
+            const prevIndex = enabledLink.findIndex(link=> link.id === active.id)
+            const newIndex = enabledLink.findIndex(link=> link.id === over.id)
+            const order = arrayMove(enabledLink,prevIndex,newIndex)
+            setEnabledLink(order)
+            const disabledLinks:SocialNetwork[] = JSON.parse(data.links).filter((link:SocialNetwork) => !link.enabled)
+           const links = order.concat(disabledLinks)
+           queryclient.setQueryData(['user'],(prevData:User)=>{
+                
+            return {
+                ...prevData, links:JSON.stringify(links)
+            }
+        })
+        }
+
+    }
     return (
         <>
             <header className="bg-slate-800 py-5">
@@ -43,7 +66,7 @@ export default function Devtree({ data }: devtree) {
                     <div className="flex justify-end">
                         <Link
                             className="font-bold text-right text-slate-800 text-2xl"
-                            to={''}
+                            to={`/${data.handle}`}
                             target="_blank"
                             rel="noreferrer noopener"
                         >Visitar Mi Perfil /{data.handle}</Link>
@@ -59,12 +82,20 @@ export default function Devtree({ data }: devtree) {
                             <p className="text-center text-lg font-black text-white">{data.description}</p>
 
                             <p className="text-white"></p>
+                            <DndContext
+                            collisionDetection={closestCenter}
+                            onDragEnd={handleDragEnd}>
                             <div className="mt-20 flex flex-col gap-5">
+                                <SortableContext 
+                                items={enabledLink}
+                                strategy={verticalListSortingStrategy}
+                                >
                                 {enabledLink.map(link => (
                                     <DevTreeLinks key={link.name} link={link} />
                                 ))}
+                                </SortableContext>
                             </div>
-
+                            </DndContext>
 
                         </div>
                     </div>
