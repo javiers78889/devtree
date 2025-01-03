@@ -1,7 +1,7 @@
 import { toast } from "sonner";
 import api from "../config/axios";
 import { isAxiosError } from "axios";
-import { UpdateForm, User } from "../types";
+import { DevTreeUser, UpdateForm, User } from "../types";
 
 export async function getUser() {
 
@@ -42,6 +42,19 @@ export async function uploadImage(file: File) {
         if (isAxiosError(error))
             throw new Error(error.response?.data.error)
 
+    }
+
+}
+
+
+export async function getHandleUser(handle: String) {
+    try {
+
+        const { data } = await api<DevTreeUser>(`/${handle}`)
+        return data
+    } catch (error) {
+        if (isAxiosError(error))
+            throw new Error(error.response?.data.error)
     }
 
 }

@@ -27,3 +27,5 @@ export type SocialNetwork = {
 }
 
 export type DevTreeLink = Pick<SocialNetwork, 'name' | 'url' | 'enabled'>
+
+export type DevTreeUser = Pick<User, 'name' | 'handle' | 'description' | 'image' | 'links'>
