@@ -58,3 +58,16 @@ export async function getHandleUser(handle: String) {
     }
 
 }
+
+export async function searchHandler(handle: String) {
+    const obj= {
+        'handle': handle
+    }
+    try {
+        const {data} = await api.post<String>('/search',obj)
+        return data
+    } catch (error) {
+        if (isAxiosError(error))
+            throw new Error(error.response?.data.error)
+    }
+}

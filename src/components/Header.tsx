@@ -2,12 +2,15 @@ import { useLocation, useNavigate } from "react-router-dom"
 import AdminNavigation from "./nav/AdminNavigation"
 import HomeNavigation from "./nav/HomeNavigation"
 import Logo from "./nav/Logo"
+import { useQueryClient } from "@tanstack/react-query"
 
 export default function Header() {
     const navigate = useNavigate()
+    const queryClient = useQueryClient()
     const Logout = () => {
         localStorage.removeItem('AUTH_TOKEN')
-        navigate('/')
+        queryClient.invalidateQueries({queryKey:['user']})
+        
     }
     const { pathname } = useLocation()
 

@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useForm } from 'react-hook-form'
 import ErrorMessage from "../components/ErrorMessage";
 import { RegisterForm } from "../types";
@@ -8,14 +8,16 @@ import api from "../config/axios";
 
 
 export default function RegisterViews() {
+    const location = useLocation()
     const navigate = useNavigate()
     const initialValues: RegisterForm = {
         name: '',
         email: '',
-        handle: '',
+        handle: location?.state || '',
         password: '',
         password_confirmation: ''
     }
+    console.log(location.state)
     const { register, watch, reset, handleSubmit, formState: { errors } } = useForm({ defaultValues: initialValues })
     const password = watch('password')
 
