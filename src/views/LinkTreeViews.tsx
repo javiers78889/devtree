@@ -39,7 +39,7 @@ export default function LinkTreeViews() {
 
   const { mutate } = useMutation({
     mutationFn: updateUser,
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast.success('Enlace Actualizado')
       querclient.invalidateQueries({ queryKey: ['user'] })
      

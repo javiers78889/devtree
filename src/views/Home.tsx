@@ -1,4 +1,3 @@
-import { Toaster } from "sonner";
 import Header from "../components/Header";
 import SearchForm from "../components/nav/SearchForm";
 

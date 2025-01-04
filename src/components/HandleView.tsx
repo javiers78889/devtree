@@ -1,11 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
-import { Navigate, useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useParams } from 'react-router-dom'
 import { getHandleUser } from '../Api/DevTreeApi'
 import Usuarios from '../views/Usuarios'
 
 export default function HandleView() {
   const { handle } = useParams()
-  const navigate = useNavigate()
 
   const { data, error, isLoading } = useQuery({
     queryFn: () => getHandleUser(handle!),

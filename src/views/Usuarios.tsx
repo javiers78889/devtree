@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { DevTreeUser, SocialNetwork } from '../types'
 import DevTreeLinks from '../components/DevTreeLinks'
 

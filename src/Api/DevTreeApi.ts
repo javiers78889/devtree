@@ -1,7 +1,7 @@
 import { toast } from "sonner";
 import api from "../config/axios";
 import { isAxiosError } from "axios";
-import { DevTreeUser, UpdateForm, User } from "../types";
+import { DevTreeUser, User } from "../types";
 
 export async function getUser() {
 
